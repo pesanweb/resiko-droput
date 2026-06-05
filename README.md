@@ -69,18 +69,20 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 
 | Algoritma | Peran | Alasan |
 |-----------|-------|--------|
-| **Logistic Regression** | Baseline | Interpretasi mudah, probabilitas dropout |
-| **Random Forest** | Utama | Akurasi tinggi, feature importance, robust |
+| **Logistic Regression** | Terbaik | Akurasi 92.01%, interpretasi mudah |
+| **Random Forest** | Perbandingan | Feature importance, robust terhadap outlier |
 
 **Klasifikasi Binary**: Model memprediksi 2 kelas saja (Dropout vs Graduate). Data Enrolled digunakan untuk inferensi/prediksi kemungkinan status akhir mahasiswa.
 
-### Mengapa Random Forest Dipilih?
+**Best Model**: Logistic Regression (92.01% accuracy)
 
-1. **Akurasi Lebih Tinggi**: ~85% vs Logistic Regression ~82%
-2. **Feature Importance**: Bisa menunjukkan faktor paling berpengaruh
-3. **Hubungan Kompleks**: Menangkap hubungan non-linear antar fitur
-4. **Robust**: Tidak terpengaruh outlier
-5. **Cocok untuk Dataset Campuran**: Menangani numerik + kategorik
+### Mengapa Logistic Regression Dipilih?
+
+1. **Akurasi Lebih Tinggi**: 92.01% vs Random Forest 90.77%
+2. **Interpretasi Mudah**: Koefisien model mudah dipahami
+3. **Cepat**: Training dan prediksi lebih cepat
+4. **Cocok untuk Binary Classification**: Efektif membedakan Dropout vs Graduate
+5. **Probabilitas**: Memberikan probabilitas dropout yang dapat diandalkan
 
 ### Pipeline Machine Learning
 
@@ -106,8 +108,8 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 │     - Train-test split (80/20)                              │
 │                                                             │
 │  5. MODELING                                                │
-│     - Logistic Regression (baseline)                        │
-│     - Random Forest (utama)                                 │
+│     - Logistic Regression (terbaik - 92.01%)                │
+│     - Random Forest (perbandingan - 90.77%)                 │
 │                                                             │
 │  6. EVALUATION                                              │
 │     - Accuracy, Precision, Recall, F1-Score                 │
@@ -293,12 +295,11 @@ streamlit run app.py
 
 | Metrik | Logistic Regression | Random Forest |
 |--------|---------------------|---------------|
-| Accuracy | ~85% | ~85% |
-| Precision | ~85% | ~85% |
-| Recall | ~85% | ~85% |
-| F1-Score | ~85% | ~85% |
+| Accuracy | **92.01%** | 90.77% |
 
-**Catatan**: Model menggunakan binary classification (Dropout vs Graduate), sehingga performa lebih baik dibanding 3-class classification. Akurasi aktual dapat dilihat dari output notebook.
+**Best Model**: Logistic Regression (92.01% accuracy)
+
+**Best Model**: Logistic Regression (92.01% accuracy)
 
 ### Rekomendasi Action Items
 
