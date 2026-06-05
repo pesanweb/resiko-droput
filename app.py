@@ -91,12 +91,17 @@ def load_model():
 # ============================================================
 @st.cache_data
 def load_data():
-    """Load dataset untuk statistik"""
+    """Load dataset untuk statistik dari URL"""
+    url = "https://raw.githubusercontent.com/dicodingacademy/dicoding_dataset/main/students_performance/data.csv"
     try:
-        df = pd.read_csv('data/data.csv', sep=';')
+        df = pd.read_csv(url, sep=';')
         return df
     except Exception:
-        return None
+        try:
+            df = pd.read_csv(url)
+            return df
+        except Exception:
+            return None
 
 
 # ============================================================

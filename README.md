@@ -92,7 +92,7 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  1. DATA LOADING                                            │
-│     Load dataset dari CSV (4424 data)                       │
+│     Load dataset dari URL (4424 data)                       │
 │                                                             │
 │  2. FILTERING DATA                                          │
 │     - Filter: hanya Dropout & Graduate untuk training       │
@@ -270,7 +270,7 @@ streamlit run app.py
 4. Klik **New app** → Pilih repository → Deploy
 
 ### Hasil Deploy
-- URL: `https://username-repo-app.streamlit.app`
+- URL: `https://resiko-droput.streamlit.app/`
 - Bisa diakses dari mana saja
 
 ---
@@ -303,14 +303,48 @@ streamlit run app.py
 
 ### Rekomendasi Action Items
 
-| No | Action Items | Target | Timeline |
-|----|--------------|--------|----------|
-| 1 | **Early Warning System**: Gunakan model prediksi | Identifikasi 90% dropout sebelum semester 3 | 1 bulan |
-| 2 | **Program Bantuan Finansial**: Prioritas untuk debitur | Kurangi dropout finansial 50% | Segera |
-| 3 | **Monitoring Akademik**: Pantau unit tidak lulus ≥ 2 | Intervensi 100% mahasiswa berisiko | Setiap semester |
-| 4 | **Program Beasiswa**: Perluas untuk berprestasi | Tambah penerima 20% | Tahun ajaran baru |
-| 5 | **Dashboard Monitoring**: Metabase real-time | Update mingguan, review bulanan | Setelah setup |
-| 6 | **Intervensi Personal**: Konseling untuk risiko > 50% | 100% mahasiswa berisiko tinggi | 2 minggu |
+**Berdasarkan hasil analisis**, mahasiswa dengan status debitur + biaya kuliah tidak tertib memiliki probabilitas dropout tertinggi (>70%). Selain itu, mahasiswa yang tidak lulus ≥ 2 unit di semester 1 juga menunjukkan risiko tinggi. Oleh karena itu, rekomendasi berikut diurutkan berdasarkan prioritas dampak:
+
+#### **PRIORITAS 1 — TINGGI (Dampak Langsung pada Dropout Rate)**
+
+| No | Rekomendasi | Dasar Data | Implementasi Praktis | Target Dampak |
+|----|-------------|------------|---------------------|---------------|
+| 1 | **Program Beasiswa Darurat untuk Debitur** | Mahasiswa dengan `Debtor=1` dan `Tuition_fees_up_to_date=0` memiliki dropout rate >70% | Buat skema beasiswa darurat khusus untuk mahasiswa berprestasi (GPA >2.5) yang memiliki tunggakan. Proses: verifikasi data keuangan → wawancara → persetujuan dalam 2 minggu | Kurangi dropout finansial 40-50% |
+| 2 | **Skema Cicilan Khusus** | Data menunjukkan keterlambatan pembayaran berkorelasi kuat dengan dropout | Tawarkan cicilan 3-6 bulan untuk mahasiswa dengan tunggakan >1 bulan. Implementasi: kerjasama dengan bank mitra untuk skema pinjaman lunak | Kurangi tunggakan 60% dalam 1 semester |
+| 3 | **Early Warning System Akademik** | Mahasiswa dengan `Curricular_units_1st_sem_approved < 4` memiliki risiko dropout 3x lebih tinggi | Sistem otomatis yang mengirim alert ke dosen pembimbing ketika mahasiswa tidak lulus ≥2 unit di semester 1. Proses: integrasi SIAKUN → notifikasi → konseling dalam 1 minggu | Identifikasi 90% mahasiswa berisiko sebelum semester 3 |
+
+#### **PRIORITAS 2 — SEDANG (Pencegahan Jangka Menengah)**
+
+| No | Rekomendasi | Dasar Data | Implementasi Praktis | Target Dampak |
+|----|-------------|------------|---------------------|---------------|
+| 4 | **Program Mentor Akademik** | Mahasiswa dengan `Admission_grade < 120` dan `Curricular_units_2nd_sem_approved < 4` cenderung dropout | Pairing mahasiswa berisiko dengan mentor (mahasiswa senior berprestasi). Implementasi: 2x pertemuan/bulan, fokus pada mata kuliah yang gagal | Tingkatkan kelulusan unit 25-30% |
+| 5 | **Perluasan Program Beasiswa Berprestasi** | Data menunjukkan `Scholarship_holder=1` memiliki dropout rate <15% (vs 45% non-beasiswa) | Tambah kuota beasiswa 20% untuk mahasiswa dengan GPA >3.0 dan penghasilan keluarga <UMR. Proses: seleksi setiap awal semester | Kurangi dropout 15-20% pada kelompok berprestasi |
+| 6 | **Monitoring Real-time Dashboard** | Data historis menunjukkan pola dropout bisa dideteksi sejak semester 1 | Deploy dashboard Metabase untuk monitoring mingguan. KPI: dropout rate per prodi, jumlah mahasiswa berisiko, efektivitas intervensi | Response time intervensi dari 1 bulan ke 1 minggu |
+
+#### **PRIORITAS 3 — RENDAH (Optimasi Jangka Panjang)**
+
+| No | Rekomendasi | Dasar Data | Implementasi Praktis | Target Dampak |
+|----|-------------|------------|---------------------|---------------|
+| 7 | **Evaluasi Kurikulum Prodi** | Beberapa prodi memiliki dropout rate >50% (berdasarkan analisis per Course) | Review kurikulum prodi dengan dropout rate tertinggi. Implementasi: survei mahasiswa dropout → identifikasi mata kuliah bermasalah → revisi kurikulum | Kurangi dropout prodi bermasalah 30% dalam 2 tahun |
+| 8 | **Program Konseling Holistik** | Faktor non-akademik (usia, status pernikahan) juga berkontribusi pada dropout | Sediakan konseling psikologis dan karir untuk mahasiswa berisiko. Implementasi: kerjasama dengan psikolog kampus, 1x/bulan | Peningkatan retensi 10-15% |
+
+#### **Cara Menggunakan Model Prediksi**
+
+1. **Input data mahasiswa** ke Streamlit app (https://resiko-droput.streamlit.app/)
+2. **Lihat hasil prediksi**: status (Dropout/Graduate), probabilitas, tingkat risiko
+3. **Ambil tindakan** berdasarkan tingkat risiko:
+   - **Risiko Tinggi (>60%)**: Intervensi segera (beasiswa darurat + konseling)
+   - **Risiko Sedang (30-60%)**: Monitoring ketat + mentor akademik
+   - **Risiko Rendah (<30%)**: Monitoring rutin
+
+#### **Metrik Keberhasilan**
+
+| Metrik | Baseline | Target 6 Bulan | Target 1 Tahun |
+|--------|----------|----------------|----------------|
+| Dropout Rate | 32% | 25% | 20% |
+| Identifikasi Dini | 0% | 70% | 90% |
+| Response Time Intervensi | 1 bulan | 2 minggu | 1 minggu |
+| Retensi Mahasiswa Berisiko | 0% | 40% | 60% |
 
 ---
 
@@ -358,15 +392,13 @@ a590_proyek_akhir/
 ├── requirements.txt          # Dependencies (untuk Streamlit Cloud)
 ├── .streamlit/
 │   └── config.toml           # Konfigurasi Streamlit
-├── docker-compose.yml        # Docker (Metabase + PostgreSQL)
 ├── data/
 │   └── data.csv              # Dataset mahasiswa
 ├── model/
 │   ├── model_dropout.pkl     # Model Binary Classification (Dropout vs Graduate)
 │   ├── scaler.pkl            # Scaler
 │   └── label_encoders.pkl    # Label encoder (binary: Dropout/Graduate)
-└── queries/
-    └── dashboard_queries.sql # 12 Query untuk Metabase
+
 ```
 
 ---
