@@ -1,0 +1,40 @@
+version: '3.8'
+
+services:
+  postgres:
+    image: postgres:16
+    container_name: student-postgres
+    environment:
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: mysecretpassword
+      POSTGRES_DB: student_dropout
+    ports:
+      - "5432:5432"
+    volumes:
+      - postgres_student_data:/var/lib/postgresql/data
+    networks:
+      - student-network
+
+  metabase:
+    image: metabase/metabase:latest
+    container_name: student-metabase
+    environment:
+      MB_DB_TYPE: postgres
+      MB_DB_DBNAME: student_dropout
+      MB_DB_PORT: 5432
+      MB_DB_USER: postgres
+      MB_DB_PASS: mysecretpassword
+      MB_DB_HOST: postgres
+    ports:
+      - "3000:3000"
+    depends_on:
+      - postgres
+    networks:
+      - student-network
+
+volumes:
+  postgres_student_data:
+
+networks:
+  student-network:
+    driver: bridge
