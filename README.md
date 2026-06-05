@@ -1,11 +1,11 @@
 # Proyek Akhir: Student Dropout Prediction - Perusahaan Edutech
 
 ## Informasi Proyek
-- **Nama**: [Isi nama Anda]
-- **Email**: [Isi email Anda]
-- **ID Dicoding**: [Isi ID Anda]
+- **Nama**: [Andy Yulianto]
+- **Email**: [rinovannet@gmail.com]
+- **ID Dicoding**: [andyid]
 - **Dataset**: [data.csv](data/data.csv)
-- **Deploy App**: [https://your-app.streamlit.app](https://your-app.streamlit.app)
+- **Deploy App**: [https://resiko-droput.streamlit.app/](Deteksi Resiko Dropout)
 
 ---
 
