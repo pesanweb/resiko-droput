@@ -103,7 +103,7 @@ def load_data():
 # HEADER
 # ============================================================
 st.markdown('<h1 class="main-header">🎓 Student Dropout Prediction</h1>', unsafe_allow_html=True)
-st.markdown('<p class="sub-header">Sistem Prediksi Risiko Dropout Mahasiswa menggunakan Machine Learning</p>', unsafe_allow_html=True)
+st.markdown('<p class="sub-header">Sistem Prediksi Risiko Dropout Mahasiswa (Binary: Dropout vs Graduate)</p>', unsafe_allow_html=True)
 st.markdown("---")
 
 
@@ -209,11 +209,13 @@ predict_button = st.sidebar.button("🔮 Prediksi Dropout", type="primary", use_
 if model is None:
     st.error("⚠️ **Model belum dilatih!**")
     st.info("""
-    **Langkah untuk melatih model:**
+    **Langkah untuk melatih model (Binary Classification):**
     1. Buka terminal di folder `a590_proyek_akhir`
     2. Jalankan: `jupyter notebook notebook.ipynb`
     3. Jalankan semua cell dari atas ke bawah
     4. Setelah selesai, jalankan: `streamlit run app.py`
+    
+    **Catatan**: Model menggunakan binary classification (Dropout vs Graduate). Data Enrolled digunakan untuk inferensi.
     """)
     st.stop()
 
@@ -375,10 +377,6 @@ if predict_button:
         if sem2_grade >= 12:
             st.success("📈 **Nilai Sem 2 Baik**: Rata-rata {:.1f}".format(sem2_grade))
     
-    else:
-        st.markdown(f'<div class="risk-medium">⏳ STATUS ENROLLED: Mahasiswa ini masih terdaftar</div>', unsafe_allow_html=True)
-        st.warning("Monitor perkembangan akademik secara berkala.")
-    
     # ============================================================
     # FEATURE IMPORTANCE
     # ============================================================
@@ -414,22 +412,23 @@ if df is not None:
     col1, col2, col3, col4 = st.columns(4)
     
     with col1:
-        st.metric("Total Mahasiswa", f"{len(df):,}")
+        st.metric("Total Dataset", f"{len(df):,}")
     
     with col2:
         dropout_count = len(df[df['Status'] == 'Dropout'])
-        st.metric("Dropout", f"{dropout_count:,}", f"{dropout_count/len(df)*100:.1f}%")
+        st.metric("Training: Dropout", f"{dropout_count:,}", f"{dropout_count/len(df)*100:.1f}%")
     
     with col3:
         graduate_count = len(df[df['Status'] == 'Graduate'])
-        st.metric("Lulus", f"{graduate_count:,}", f"{graduate_count/len(df)*100:.1f}%")
+        st.metric("Training: Graduate", f"{graduate_count:,}", f"{graduate_count/len(df)*100:.1f}%")
     
     with col4:
         enrolled_count = len(df[df['Status'] == 'Enrolled'])
-        st.metric("Enrolled", f"{enrolled_count:,}", f"{enrolled_count/len(df)*100:.1f}%")
+        st.metric("Inferensi: Enrolled", f"{enrolled_count:,}", f"{enrolled_count/len(df)*100:.1f}%")
     
     # Distribusi Status
     st.markdown("### Distribusi Status Mahasiswa")
+    st.caption("Model dilatih menggunakan data Dropout dan Graduate. Data Enrolled digunakan untuk inferensi.")
     status_counts = df['Status'].value_counts()
     st.bar_chart(status_counts)
     

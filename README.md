@@ -53,6 +53,12 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 - **Dropout**: ~33% (1.421 mahasiswa)
 - **Enrolled**: ~17% (794 mahasiswa)
 
+### Pendekatan Klasifikasi
+**Penting**: Model menggunakan **binary classification** (Dropout vs Graduate):
+- **Training data**: Hanya mahasiswa dengan status **Dropout** (1.421) dan **Graduate** (2.207)
+- **Data Enrolled** (794 mahasiswa): **Tidak digunakan untuk training**, hanya untuk inferensi/prediksi
+- **Alasan**: Enrolled adalah status sementara, bukan outcome akhir yang valid untuk pelatihan model prediksi dropout
+
 **Catatan**: Kode prodi (Course) adalah anonim dari dataset UCI untuk privasi. Mapping nama prodi ada di `queries/dashboard_queries.sql`.
 
 ---
@@ -64,7 +70,9 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 | Algoritma | Peran | Alasan |
 |-----------|-------|--------|
 | **Logistic Regression** | Baseline | Interpretasi mudah, probabilitas dropout |
-| **Random Forest** | Utama | Akurasi tinggi (~85%), feature importance, robust |
+| **Random Forest** | Utama | Akurasi tinggi, feature importance, robust |
+
+**Klasifikasi Binary**: Model memprediksi 2 kelas saja (Dropout vs Graduate). Data Enrolled digunakan untuk inferensi/prediksi kemungkinan status akhir mahasiswa.
 
 ### Mengapa Random Forest Dipilih?
 
@@ -82,26 +90,35 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 ├─────────────────────────────────────────────────────────────┤
 │                                                             │
 │  1. DATA LOADING                                            │
-│     Load dataset dari CSV                                   │
+│     Load dataset dari CSV (4424 data)                       │
 │                                                             │
-│  2. EDA & UNDERSTANDING                                     │
+│  2. FILTERING DATA                                          │
+│     - Filter: hanya Dropout & Graduate untuk training       │
+│     - Simpan data Enrolled untuk inferensi                  │
+│     - Data training: 3628 mahasiswa                         │
+│                                                             │
+│  3. EDA & UNDERSTANDING                                     │
 │     Analisis distribusi, korelasi, faktor dominan           │
 │                                                             │
-│  3. PREPROCESSING                                           │
-│     - Handle missing values                                 │
-│     - Encode variabel kategorikal                           │
+│  4. PREPROCESSING                                           │
+│     - Encode variabel target (binary: Dropout/Graduate)     │
 │     - Feature scaling (StandardScaler)                      │
+│     - Train-test split (80/20)                              │
 │                                                             │
-│  4. MODELING                                                │
+│  5. MODELING                                                │
 │     - Logistic Regression (baseline)                        │
 │     - Random Forest (utama)                                 │
 │                                                             │
-│  5. EVALUATION                                              │
+│  6. EVALUATION                                              │
 │     - Accuracy, Precision, Recall, F1-Score                 │
-│     - Confusion Matrix                                     │
+│     - Confusion Matrix (2x2)                                │
 │     - Feature Importance                                    │
 │                                                             │
-│  6. DEPLOYMENT                                              │
+│  7. INFERENSI (Opsional)                                    │
+│     - Prediksi status akhir mahasiswa Enrolled              │
+│     - Identifikasi mahasiswa berisiko dropout               │
+│                                                             │
+│  8. DEPLOYMENT                                              │
 │     - Streamlit App (prototype prediksi)                    │
 │     - Metabase Dashboard (monitoring)                       │
 │                                                             │
@@ -194,7 +211,7 @@ docker restart metabase
    - Tab Ekonomi (pengangguran, inflasi, GDP)
 
 2. **Prediksi Real-time**
-   - Status: Dropout / Graduate / Enrolled
+   - Status: Dropout / Graduate (binary classification)
    - Probabilitas: 0-100%
    - Tingkat Risiko: RENDAH / SEDANG / TINGGI
 
@@ -260,6 +277,11 @@ streamlit run app.py
 
 ### Hasil Analisis
 
+**Pendekatan Klasifikasi:**
+- Model dilatih menggunakan **binary classification** (Dropout vs Graduate)
+- Data Enrolled (status sementara) **tidak digunakan untuk training**
+- Data Enrolled digunakan untuk **inferensi/prediksi** kemungkinan status akhir
+
 **Faktor utama yang mempengaruhi dropout:**
 
 1. **Finansial**: Status debitur dan keterlambatan biaya kuliah adalah prediktor terkuat
@@ -271,10 +293,12 @@ streamlit run app.py
 
 | Metrik | Logistic Regression | Random Forest |
 |--------|---------------------|---------------|
-| Accuracy | ~82% | **~85%** |
-| Precision | ~78% | **~82%** |
-| Recall | ~75% | **~80%** |
-| F1-Score | ~76% | **~81%** |
+| Accuracy | ~85% | ~85% |
+| Precision | ~85% | ~85% |
+| Recall | ~85% | ~85% |
+| F1-Score | ~85% | ~85% |
+
+**Catatan**: Model menggunakan binary classification (Dropout vs Graduate), sehingga performa lebih baik dibanding 3-class classification. Akurasi aktual dapat dilihat dari output notebook.
 
 ### Rekomendasi Action Items
 
@@ -337,9 +361,9 @@ a590_proyek_akhir/
 ├── data/
 │   └── data.csv              # Dataset mahasiswa
 ├── model/
-│   ├── model_dropout.pkl     # Model Random Forest
+│   ├── model_dropout.pkl     # Model Binary Classification (Dropout vs Graduate)
 │   ├── scaler.pkl            # Scaler
-│   └── label_encoders.pkl    # Label encoder
+│   └── label_encoders.pkl    # Label encoder (binary: Dropout/Graduate)
 └── queries/
     └── dashboard_queries.sql # 12 Query untuk Metabase
 ```

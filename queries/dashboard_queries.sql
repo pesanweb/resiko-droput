@@ -5,6 +5,12 @@
 -- NOTE: Dataset dari UCI Machine Learning Repository
 --       Kode prodi (Course) adalah anonim, bukan nama asli
 --       Mapping di bawah bersifat ilustrasi berdasarkan kode
+--
+-- PENTING - PENDEKATAN KLASSIFIKASI:
+-- - Model dilatih menggunakan BINARY CLASSIFICATION (Dropout vs Graduate)
+-- - Data Enrolled TIDAK digunakan untuk training, hanya untuk inferensi
+-- - Dashboard queries di bawah menggunakan SELURUH data (termasuk Enrolled)
+--   untuk analisis eksplorasi dan monitoring
 
 
 -- ============================================================
