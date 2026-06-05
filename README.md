@@ -157,16 +157,15 @@ Dataset berisi informasi mahasiswa dengan **4.424 baris** dan **37 kolom**. Sumb
 # Export data PostgreSQL
 docker exec student-postgres pg_dump -U postgres student_dropout > backup_student.sql
 
-# Export Metabase (cari lokasi file database dulu)
-docker exec student-metabase find / -name "metabase.db*" 2>/dev/null
-docker cp student-metabase:/metabase.db/ ./
+# Export Metabase (dashboard & pengaturan)
+docker cp metabase:/metabase.db/metabase.db.mv.db ./
 
 # Restore data PostgreSQL
 docker exec -i student-postgres psql -U postgres student_dropout < backup_student.sql
 
 # Restore Metabase
-docker cp ./metabase.db/ student-metabase:/metabase.db/
-docker restart student-metabase
+docker cp ./metabase.db.mv.db metabase:/metabase.db/metabase.db.mv.db
+docker restart metabase
 ```
 
 **Catatan**: Jika sulit export Metabase, cukup simpan query SQL di `queries/dashboard_queries.sql`. Dashboard bisa di-recreate kapan saja.
@@ -319,7 +318,7 @@ streamlit run app.py
 | Query error `near "data"` | Gunakan `"data"` dengan quote |
 | Tabel data tidak ada | Jalankan cell import di notebook |
 | Docker error port | `docker stop` lalu `docker-compose up -d` |
-| `docker cp` metabase error | Cari lokasi file: `docker exec find / -name "metabase.db*"` |
+| `docker cp` metabase error | Gunakan `metabase:/metabase.db/metabase.db.mv.db` (bukan student-metabase) |
 | Model belum tersimpan | Jalankan cell terakhir notebook |
 
 ---
