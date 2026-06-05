@@ -5,7 +5,7 @@
 - **Email**: [rinovannet@gmail.com]
 - **ID Dicoding**: [andyid]
 - **Dataset**: [data.csv](data/data.csv)
-- **Deploy App**: [https://resiko-droput.streamlit.app/](Deteksi Resiko Dropout)
+- **Deploy App**: [Deteksi Resiko Dropout](https://resiko-droput.streamlit.app/)
 
 ---
 
